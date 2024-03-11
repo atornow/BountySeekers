@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mrkelpy</groupId>
         <artifactId>BountySeekers</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
 
     </parent>
 
@@ -32,6 +32,11 @@
             <groupId>com.mrkelpy</groupId>
             <artifactId>core-nms</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

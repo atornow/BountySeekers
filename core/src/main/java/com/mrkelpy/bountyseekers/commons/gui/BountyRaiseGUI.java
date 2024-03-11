@@ -26,6 +26,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -133,35 +134,41 @@ public class BountyRaiseGUI extends ConfirmationGUI {
      */
     @Override
     public void onCancel(Player player) {
-
         // Unregisters the event handlers so there's no recursion
         HandlerList.unregisterAll(this);
-        boolean isKeepInventoryFalse = player.getWorld().getGameRuleValue("keepInventory").equals("false");
 
-        // Drops all the items inside the GUI at the player's location if they die with the GUI open, or they're not online.
-        if ((player.getHealth() == 0 && isKeepInventoryFalse) || Bukkit.getServer().getPlayerExact(player.getName()) == null) {
+        // Iterate through the GUI inventory items
+        for (int i = 0; i < this.inventory.getSize(); i++) {
+            ItemStack item = this.inventory.getItem(i);
 
-            for (int i = 0; i <= this.storageSlots; i++) {
-                ItemStack item = this.inventory.getItem(i);
+            // Skip null or air items
+            if (item == null || item.getType() == Material.AIR) continue;
 
-                if (item != null && item.getType() != Material.AIR)
-                     ItemStackUtils.scheduleItemDrop(player, item, 1L);
+            // Check if the item is not wool (specifically RED_WOOL or LIME_WOOL used for GUI)
+            if (item.getType() != Material.LIME_WOOL && item.getType() != Material.RED_WOOL) {
+                // Logic to return non-wool items to the player's inventory
+                // This example simply tries to add the item back to the player's inventory directly
+                // You might need to adjust this to fit your inventory management logic
+                HashMap<Integer, ItemStack> overflow = player.getInventory().addItem(item);
+                // Handle any overflow (e.g., items that couldn't fit in the player's inventory)
+                for (ItemStack overflowItem : overflow.values()) {
+                    player.getWorld().dropItem(player.getLocation(), overflowItem);
+                }
+
+                // Remove the item from the GUI inventory after processing
+                this.inventory.setItem(i, new ItemStack(Material.AIR));
             }
-            return;
         }
 
-        // If that doesn't happen, and there's a normal cancellation, return the items to the player and close the inventory after.
-        for (int i = 0; i < this.benefactor.getPlayer().getInventory().getStorageContents().length; i++) {
-
-            if (this.inventory.getItem(i) == null) continue;
-            this.benefactor.getPlayer().getInventory().setItem(i, this.inventory.getItem(i));
-        }
-
-        if (this.benefactor.getPlayer().getOpenInventory().getType() == InventoryType.CHEST)
+        // Closing the GUI inventory after processing items
+        if (this.benefactor.getPlayer().getOpenInventory().getType() == InventoryType.CHEST) {
             this.benefactor.getPlayer().closeInventory();
+        }
 
+        // Update the player's inventory to reflect any changes
         player.updateInventory();
     }
+
 
     /**
      * Count closing the inventory as a cancel.
