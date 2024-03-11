@@ -154,7 +154,6 @@ public class BountyRaiseGUI extends ConfirmationGUI {
                 for (ItemStack overflowItem : overflow.values()) {
                     player.getWorld().dropItem(player.getLocation(), overflowItem);
                 }
-
                 // Remove the item from the GUI inventory after processing
                 this.inventory.setItem(i, new ItemStack(Material.AIR));
             }
