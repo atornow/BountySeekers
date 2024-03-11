@@ -148,7 +148,7 @@ public class BountyRaiseGUI extends ConfirmationGUI {
             if (item.getType() != Material.LIME_WOOL && item.getType() != Material.RED_WOOL) {
                 // Logic to return non-wool items to the player's inventory
                 // This example simply tries to add the item back to the player's inventory directly
-                // You might need to adjust this to fit your inventory management logic
+
                 HashMap<Integer, ItemStack> overflow = player.getInventory().addItem(item);
                 // Handle any overflow (e.g., items that couldn't fit in the player's inventory)
                 for (ItemStack overflowItem : overflow.values()) {
